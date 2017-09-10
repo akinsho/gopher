@@ -18,10 +18,10 @@ func update(screen *ebiten.Image) error {
 	handleInput()
 	velocityY += gravity
 
+	contact := detectCollision()
 	posY += velocityY
-	if posY >= lowerBound {
-		posY = lowerBound
-		onGround = true
+	if posY >= contact {
+		posY = contact
 	}
 	return nil
 }

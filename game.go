@@ -19,15 +19,28 @@ func drawCharacter(s *ebiten.Image) {
 	}
 	character.Fill(color.NRGBA{0xff, 0x00, 0x00, 0xff})
 	opts := &ebiten.DrawImageOptions{}
-
 	opts.GeoM.Translate(posX, posY)
 
 	s.DrawImage(character, opts)
 }
 
+func detectCollision() (b float64) {
+	if posX >= islandOneX && posY <= islandOneY {
+		onGround = true
+		return islandOneY - characterSize
+	} else if posX <= islandTwoX+200 && posY <= islandTwoY {
+		onGround = true
+		return islandTwoY - characterSize
+	}
+	onGround = true
+	return lowerBound
+}
+
 func drawLand(s *ebiten.Image) {
 	if landmass == nil {
 		landmass, _ = ebiten.NewImage(screenWidth, landHeight, ebiten.FilterNearest)
+		islandOne, _ = ebiten.NewImage(125, 10, ebiten.FilterNearest)
+		islandTwo, _ = ebiten.NewImage(200, 10, ebiten.FilterNearest)
 		grass, _ = ebiten.NewImage(screenWidth, grassHeight, ebiten.FilterNearest)
 	}
 	brown, err := colorful.Hex("#895C22")
@@ -36,7 +49,17 @@ func drawLand(s *ebiten.Image) {
 	logError(err)
 
 	landmass.Fill(brown)
+	islandOne.Fill(brown)
+	islandTwo.Fill(brown)
 	grass.Fill(green)
+
+	iOneOpts := &ebiten.DrawImageOptions{}
+	iOneOpts.GeoM.Translate(islandOneX, islandOneY)
+	s.DrawImage(islandOne, iOneOpts)
+
+	iTwoOpts := &ebiten.DrawImageOptions{}
+	iTwoOpts.GeoM.Translate(islandTwoX, islandTwoY)
+	s.DrawImage(islandTwo, iTwoOpts)
 
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(0, screenHeight-landHeight)

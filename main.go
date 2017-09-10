@@ -1,5 +1,10 @@
 package main
 
+// TODO
+// 1. clouds should repeat the movements - i.e loop
+// 2. clarify collision borders
+// 3. complete out of bounds management
+
 import (
 	"image/color"
 	"log"
@@ -25,6 +30,8 @@ var onGround = true
 var sky color.Color
 
 // Ebiten images
+var islandOne *ebiten.Image
+var islandTwo *ebiten.Image
 var character *ebiten.Image
 var landmass *ebiten.Image
 var grass *ebiten.Image
@@ -32,6 +39,10 @@ var grass *ebiten.Image
 // Characters positions - saved here as global state variables
 var posX float64
 var posY = float64(lowerBound)
+var islandOneX float64 = screenWidth - 145
+var islandOneY float64 = screenHeight - 60
+var islandTwoX float64
+var islandTwoY float64 = screenHeight - 50
 var cloudX float64
 var velocityY float64
 var gravity = 0.5
