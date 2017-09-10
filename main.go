@@ -2,18 +2,21 @@ package main
 
 import (
 	"image/color"
+	"log"
 
 	"github.com/hajimehoshi/ebiten"
+	"github.com/lucasb-eyer/go-colorful"
 )
 
 const (
-	screenWidth  = 320
-	screenHeight = 420
+	screenWidth  = 640
+	screenHeight = 320
 )
 
 const (
 	landHeight    = 12
 	characterSize = 8
+	grassHeight   = 4
 )
 
 func main() {
@@ -23,9 +26,13 @@ func main() {
 	}
 }
 
+// Color Palette
+var sky color.Color
+
 // Ebiten images
 var character *ebiten.Image
 var landmass *ebiten.Image
+var grass *ebiten.Image
 
 // Characters positions - saved here as global state variables
 var posX float64
@@ -34,11 +41,20 @@ var posY float64
 func update(screen *ebiten.Image) error {
 
 	// x, y := ebiten.CursorPosition()
+	if sky == nil {
+		sky, _ = colorful.Hex("#5FE8F7")
+	}
+	//The Screen must first be filled otherwise it will cover everything else
+	screen.Fill(sky)
+
 	drawCharacter(screen)
 	drawLand(screen)
 	handleInput()
-
 	return nil
+}
+
+func logError(message string, err error) {
+	log.Printf("%s: %v", message, err)
 }
 
 func drawCharacter(s *ebiten.Image) {
@@ -48,33 +64,49 @@ func drawCharacter(s *ebiten.Image) {
 	}
 	character.Fill(color.NRGBA{0xff, 0x00, 0x00, 0xff})
 	opts := &ebiten.DrawImageOptions{}
-	// posOffset := posY - float64(screenHeight+characterSize+landHeight)
-	opts.GeoM.Translate(posX, posY)
+	posOffset := posY + float64(screenHeight-characterSize-landHeight-grassHeight)
+	opts.GeoM.Translate(posX, posOffset)
 	s.DrawImage(character, opts)
 }
 
 func drawLand(s *ebiten.Image) {
 	if landmass == nil {
 		landmass, _ = ebiten.NewImage(screenWidth, landHeight, ebiten.FilterNearest)
+		grass, _ = ebiten.NewImage(screenWidth, grassHeight, ebiten.FilterNearest)
 	}
-	landmass.Fill(color.White)
+	brown, err := colorful.Hex("#895C22")
+	if err != nil {
+		logError("Color Error", err)
+	}
+	green, err := colorful.Hex("#53D46B")
+	if err != nil {
+		logError("Color Error", err)
+	}
+
+	landmass.Fill(brown)
+	grass.Fill(green)
+
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(0, screenHeight-landHeight)
 	s.DrawImage(landmass, opts)
+
+	grassOpts := &ebiten.DrawImageOptions{}
+	grassOpts.GeoM.Translate(0, screenHeight-landHeight-grassHeight)
+	s.DrawImage(grass, grassOpts)
 }
 
 func handleInput() {
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		if posY > 0 || posY < screenHeight {
-			posY -= 10
+		if posY > 0 || posY < screenHeight+landHeight {
+			posY -= 2
 		} else {
 			posY = 0
 		}
 	}
-	// When the "down arrow keposY" is pressed..
+	// When the "down arrow key" is pressed..
 	if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		if posY > 0 || posY < screenHeight {
-			posY += 10
+			posY += 2
 		} else {
 			posX = 0
 		}
@@ -82,7 +114,7 @@ func handleInput() {
 	// When the "left arrow key" is pressed..
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		if posX > 0 || posX < screenWidth {
-			posX -= 10
+			posX -= 2
 		} else {
 			posX = 0
 		}
@@ -90,7 +122,7 @@ func handleInput() {
 	// When the "right arrow key" is pressed..
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		if posX > 0 || posX < screenWidth {
-			posX += 10
+			posX += 2
 		} else {
 			posX = 0
 		}
