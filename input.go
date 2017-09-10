@@ -6,7 +6,7 @@ import (
 
 func jump() {
 	if onGround {
-		velocityY = -12.0
+		velocityY = -7.0 //this value determines the height of the jump to be executed
 		onGround = false
 	}
 }
@@ -21,10 +21,8 @@ func handleInput() {
 	}
 	// When the "down arrow key" is pressed..
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		if posY > 280 {
-			if onGround {
-				posY -= 2
-			}
+		if onGround {
+			posY -= 2
 		}
 	}
 	// When the "left arrow key" is pressed..
