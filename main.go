@@ -32,6 +32,7 @@ var grass *ebiten.Image
 // Characters positions - saved here as global state variables
 var posX float64
 var posY = float64(lowerBound)
+var cloudX float64
 var velocityY float64
 var gravity = 0.5
 

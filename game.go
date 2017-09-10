@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"log"
 	"os"
 
 	"github.com/hajimehoshi/ebiten"
@@ -60,9 +61,19 @@ func getImage() (i image.Image) {
 
 func drawClouds(s *ebiten.Image) {
 	img := getImage()
-	opts := &ebiten.DrawImageOptions{}
-	ebimg, err := ebiten.NewImageFromImage(img, ebiten.FilterNearest)
-
-	s.DrawImage(ebimg, opts)
+	oneOpts := &ebiten.DrawImageOptions{}
+	twoOpts := &ebiten.DrawImageOptions{}
+	one, err := ebiten.NewImageFromImage(img, ebiten.FilterNearest)
+	two, err := ebiten.NewImageFromImage(img, ebiten.FilterNearest)
+	if cloudX < screenWidth-20 || cloudX > 0 {
+		cloudX += 0.5
+	} else {
+		log.Println(cloudX)
+		cloudX = 0
+	}
+	oneOpts.GeoM.Translate(cloudX, 5)
+	twoOpts.GeoM.Translate(cloudX/2, 100)
+	s.DrawImage(one, oneOpts)
+	s.DrawImage(two, twoOpts)
 	logError(err)
 }
