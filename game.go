@@ -12,6 +12,9 @@ import (
 	"github.com/nfnt/resize"
 )
 
+var brown, _ = colorful.Hex("#895C22")
+var green, _ = colorful.Hex("#53D46B")
+
 func drawCharacter(s *ebiten.Image) {
 	//If square does not already exist initialise it - this way a new image is not created each time
 	if character == nil {
@@ -36,31 +39,36 @@ func detectCollision() (b float64) {
 	return lowerBound
 }
 
+func drawEachLandmass(s *ebiten.Image, sizeX int, sizeY int, coordsX int, coordsY int) {
+	mass, _ := ebiten.NewImage(sizeX, sizeY, ebiten.FilterNearest)
+	mass.Fill(brown)
+	foliage, _ := ebiten.NewImage(sizeX, sizeY/3, ebiten.FilterNearest)
+	foliage.Fill(green)
+	massOpts := &ebiten.DrawImageOptions{}
+	massOpts.GeoM.Translate(float64(coordsX), float64(coordsY))
+	foliageOpts := &ebiten.DrawImageOptions{}
+	foliageOpts.GeoM.Translate(float64(coordsX), float64(coordsY-1))
+	s.DrawImage(mass, massOpts)
+	s.DrawImage(foliage, foliageOpts)
+}
+
 func drawLand(s *ebiten.Image) {
 	if landmass == nil {
 		landmass, _ = ebiten.NewImage(screenWidth, landHeight, ebiten.FilterNearest)
-		islandOne, _ = ebiten.NewImage(125, 10, ebiten.FilterNearest)
-		islandTwo, _ = ebiten.NewImage(200, 10, ebiten.FilterNearest)
 		grass, _ = ebiten.NewImage(screenWidth, grassHeight, ebiten.FilterNearest)
 	}
-	brown, err := colorful.Hex("#895C22")
-	logError(err)
-	green, err := colorful.Hex("#53D46B")
-	logError(err)
 
-	landmass.Fill(brown)
-	islandOne.Fill(brown)
-	islandTwo.Fill(brown)
+	drawEachLandmass(s, 10, 100, screenWidth/3, screenHeight-10)
+	drawEachLandmass(s, 125, 10, int(islandTwoX), int(islandTwoY))
+	drawEachLandmass(s, 200, 10, int(islandOneX), int(islandOneY-10))
+	// TODO loop through all the maps and call drawEachLandmass for each
+	x := map[string]int{"sizeX": 10, "sizeY": 100, "coordsX": screenWidth / 3, "coordsY": screenHeight - 10}
+	y := map[string]int{"sizeX": 125, "sizeY": 10, "coordsX": int(islandTwoX), "coordsY": int(islandTwoY)}
+	z := map[string]int{"sizeX": 200, "sizeY": 10, "coordsX": int(islandOneX), "coordsY": int(islandOneY)}
+	log.Println(x, y, z)
+
 	grass.Fill(green)
-
-	iOneOpts := &ebiten.DrawImageOptions{}
-	iOneOpts.GeoM.Translate(islandOneX, islandOneY)
-	s.DrawImage(islandOne, iOneOpts)
-
-	iTwoOpts := &ebiten.DrawImageOptions{}
-	iTwoOpts.GeoM.Translate(islandTwoX, islandTwoY)
-	s.DrawImage(islandTwo, iTwoOpts)
-
+	landmass.Fill(brown)
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(0, screenHeight-landHeight)
 	s.DrawImage(landmass, opts)
@@ -91,7 +99,6 @@ func drawClouds(s *ebiten.Image) {
 	if cloudX < screenWidth-20 || cloudX > 0 {
 		cloudX += 0.5
 	} else {
-		log.Println(cloudX)
 		cloudX = 0
 	}
 	oneOpts.GeoM.Translate(cloudX, 5)

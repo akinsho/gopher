@@ -5,6 +5,8 @@ import (
 	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
+var contact float64
+
 func update(screen *ebiten.Image) error {
 
 	if sky == nil {
@@ -18,10 +20,11 @@ func update(screen *ebiten.Image) error {
 	handleInput()
 	velocityY += gravity
 
-	contact := detectCollision()
+	contact = detectCollision()
 	posY += velocityY
 	if posY >= contact {
 		posY = contact
+		velocityY = 0.0
 	}
 	return nil
 }
