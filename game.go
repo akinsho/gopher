@@ -4,7 +4,6 @@ import (
 	"image"
 	"image/color"
 	"image/png"
-	"log"
 	"os"
 
 	"github.com/hajimehoshi/ebiten"
@@ -39,17 +38,24 @@ func detectCollision() (b float64) {
 	return lowerBound
 }
 
-func drawEachLandmass(s *ebiten.Image, sizeX int, sizeY int, coordsX int, coordsY int) {
-	mass, _ := ebiten.NewImage(sizeX, sizeY, ebiten.FilterNearest)
+func (i *islandDetails) drawEachLandmass(s *ebiten.Image) {
+	mass, _ := ebiten.NewImage(i.sizeX, i.sizeY, ebiten.FilterNearest)
 	mass.Fill(brown)
-	foliage, _ := ebiten.NewImage(sizeX, sizeY/3, ebiten.FilterNearest)
+	foliage, _ := ebiten.NewImage(i.sizeX, i.sizeY/3, ebiten.FilterNearest)
 	foliage.Fill(green)
 	massOpts := &ebiten.DrawImageOptions{}
-	massOpts.GeoM.Translate(float64(coordsX), float64(coordsY))
+	massOpts.GeoM.Translate(float64(i.coordsX), float64(i.coordsY))
 	foliageOpts := &ebiten.DrawImageOptions{}
-	foliageOpts.GeoM.Translate(float64(coordsX), float64(coordsY-1))
+	foliageOpts.GeoM.Translate(float64(i.coordsX), float64(i.coordsY-1))
 	s.DrawImage(mass, massOpts)
 	s.DrawImage(foliage, foliageOpts)
+}
+
+type islandDetails struct {
+	sizeX   int
+	sizeY   int
+	coordsX int
+	coordsY int
 }
 
 func drawLand(s *ebiten.Image) {
@@ -58,14 +64,14 @@ func drawLand(s *ebiten.Image) {
 		grass, _ = ebiten.NewImage(screenWidth, grassHeight, ebiten.FilterNearest)
 	}
 
-	drawEachLandmass(s, 10, 100, screenWidth/3, screenHeight-10)
-	drawEachLandmass(s, 125, 10, int(islandTwoX), int(islandTwoY))
-	drawEachLandmass(s, 200, 10, int(islandOneX), int(islandOneY-10))
-	// TODO loop through all the maps and call drawEachLandmass for each
-	x := map[string]int{"sizeX": 10, "sizeY": 100, "coordsX": screenWidth / 3, "coordsY": screenHeight - 10}
-	y := map[string]int{"sizeX": 125, "sizeY": 10, "coordsX": int(islandTwoX), "coordsY": int(islandTwoY)}
-	z := map[string]int{"sizeX": 200, "sizeY": 10, "coordsX": int(islandOneX), "coordsY": int(islandOneY)}
-	log.Println(x, y, z)
+	x := islandDetails{sizeX: 10, sizeY: 100, coordsX: screenWidth / 3, coordsY: screenHeight - 10}
+	y := islandDetails{sizeX: 125, sizeY: 10, coordsX: int(islandTwoX), coordsY: int(islandTwoY)}
+	z := islandDetails{sizeX: 200, sizeY: 10, coordsX: int(islandOneX), coordsY: int(islandOneY)}
+
+	arr := []islandDetails{x, y, z}
+	for _, v := range arr {
+		v.drawEachLandmass(s)
+	}
 
 	grass.Fill(green)
 	landmass.Fill(brown)
