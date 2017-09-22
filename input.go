@@ -9,7 +9,6 @@ func jump() {
 		velocityY = -7.0 //this value determines the height of the jump to be executed
 		onGround = false
 	}
-	// time.AfterFunc(300*time.Millisecond, endJump)
 }
 
 func endJump() {

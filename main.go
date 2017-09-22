@@ -47,6 +47,8 @@ var (
 	size          float64 = 10
 	islandYLength float64 = 125
 	islandXLength float64 = 200
+	islandThreeX  float64 = (screenWidth / 2) - 140
+	islandThreeY  float64 = screenHeight - 80
 	cloudX        float64
 	velocityY     float64
 	gravity       = 0.5
