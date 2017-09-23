@@ -26,16 +26,16 @@ func drawCharacter(s *ebiten.Image) {
 	s.DrawImage(character, opts)
 }
 
-func detectCollision() (b float64) {
+func detectCollision() (b int) {
 	if posX <= 0 {
 		posX = 0
 	} else if posX >= screenWidth-characterSize {
 		posX = screenWidth - characterSize
 	}
-	if posX >= islandOneX && posY <= islandOneY {
+	if int(posX) >= islandOneX && int(posY) <= islandOneY {
 		onGround = true
 		return islandOneY - characterSize
-	} else if posX <= islandYLength && posY < islandTwoY {
+	} else if int(posX) <= islandYLength && int(posY) < islandTwoY {
 		onGround = true
 		return islandTwoY - characterSize
 	}
@@ -69,11 +69,11 @@ func drawLand(s *ebiten.Image) {
 		grass, _ = ebiten.NewImage(screenWidth, grassHeight, ebiten.FilterNearest)
 	}
 
-	// x := islandDetails{sizeX: 10, sizeY: 100, coordsX: screenWidth / 3, coordsY: screenHeight - 10}
-	y := islandDetails{sizeX: int(islandYLength), sizeY: int(size), coordsX: int(islandTwoX), coordsY: int(islandTwoY)}
-	z := islandDetails{sizeX: int(islandXLength), sizeY: int(size), coordsX: int(islandOneX), coordsY: int(islandOneY)}
+	x := islandDetails{sizeX: islandsHeight, sizeY: islandsWidth, coordsX: islandThreeX, coordsY: islandThreeY}
+	y := islandDetails{sizeX: islandYLength, sizeY: islandsWidth, coordsX: islandTwoX, coordsY: islandTwoY}
+	z := islandDetails{sizeX: islandXLength, sizeY: islandsWidth, coordsX: islandOneX, coordsY: islandOneY}
 
-	arr := []islandDetails{y, z}
+	arr := []islandDetails{x, y, z}
 	for _, v := range arr {
 		v.drawEachLandmass(s)
 	}

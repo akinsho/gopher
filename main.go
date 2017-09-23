@@ -2,8 +2,6 @@ package main
 
 // TODO
 // 1. clouds should repeat the movements - i.e loop
-// 2. clarify collision borders
-// 3. complete out of bounds management
 
 import (
 	"image/color"
@@ -39,16 +37,17 @@ var (
 // Characters positions - saved here as global state variables
 var (
 	posX          float64
-	posY                  = float64(lowerBound)
-	islandOneX    float64 = screenWidth - 145
-	islandOneY    float64 = screenHeight - 60
-	islandTwoX    float64
-	islandTwoY    float64 = screenHeight - 50
-	size          float64 = 10
-	islandYLength float64 = 125
-	islandXLength float64 = 200
-	islandThreeX  float64 = (screenWidth / 2) - 140
-	islandThreeY  float64 = screenHeight - 80
+	posY          = float64(lowerBound)
+	islandOneX    = screenWidth - 145
+	islandOneY    = screenHeight - 60
+	islandTwoX    int
+	islandTwoY    = screenHeight - 50
+	islandsWidth  = 10
+	islandsHeight = 100
+	islandYLength = 125
+	islandXLength = 200
+	islandThreeX  = (screenWidth / 2) - 140
+	islandThreeY  = screenHeight - 80
 	cloudX        float64
 	velocityY     float64
 	gravity       = 0.5
