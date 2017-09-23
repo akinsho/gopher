@@ -27,6 +27,11 @@ func drawCharacter(s *ebiten.Image) {
 }
 
 func detectCollision() (b float64) {
+	if posX <= 0 {
+		posX = 0
+	} else if posX >= screenWidth-characterSize {
+		posX = screenWidth - characterSize
+	}
 	if posX >= islandOneX && posY <= islandOneY {
 		onGround = true
 		return islandOneY - characterSize
