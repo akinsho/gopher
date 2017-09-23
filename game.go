@@ -27,21 +27,12 @@ func drawCharacter(s *ebiten.Image) {
 }
 
 func detectCollision() (b float64) {
-	//Prevents character escaping the game!
-	if posX <= 0 {
-		posX = 1
-	} else if posX >= screenWidth-characterSize {
-		posX = screenWidth - characterSize
-	}
-	if posX >= islandOneX && posY <= islandOneY-characterSize {
+	if posX >= islandOneX && posY <= islandOneY {
 		onGround = true
 		return islandOneY - characterSize
 	} else if posX <= islandYLength && posY < islandTwoY {
 		onGround = true
 		return islandTwoY - characterSize
-	} else if posX <= islandThreeX && posX >= islandOneX && posY <= islandThreeY {
-		onGround = true
-		return islandThreeY - characterSize
 	}
 	onGround = true
 	return lowerBound
@@ -72,11 +63,12 @@ func drawLand(s *ebiten.Image) {
 		landmass, _ = ebiten.NewImage(screenWidth, landHeight, ebiten.FilterNearest)
 		grass, _ = ebiten.NewImage(screenWidth, grassHeight, ebiten.FilterNearest)
 	}
-	x := islandDetails{sizeX: 100, sizeY: 10, coordsX: int(islandThreeX), coordsY: int(islandThreeY)}
+
+	// x := islandDetails{sizeX: 10, sizeY: 100, coordsX: screenWidth / 3, coordsY: screenHeight - 10}
 	y := islandDetails{sizeX: int(islandYLength), sizeY: int(size), coordsX: int(islandTwoX), coordsY: int(islandTwoY)}
 	z := islandDetails{sizeX: int(islandXLength), sizeY: int(size), coordsX: int(islandOneX), coordsY: int(islandOneY)}
 
-	arr := []islandDetails{x, y, z}
+	arr := []islandDetails{y, z}
 	for _, v := range arr {
 		v.drawEachLandmass(s)
 	}
