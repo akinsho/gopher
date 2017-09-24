@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"log"
 	"os"
 
 	"github.com/hajimehoshi/ebiten"
@@ -13,6 +14,19 @@ import (
 
 var brown, _ = colorful.Hex("#895C22")
 var green, _ = colorful.Hex("#53D46B")
+
+type islandDetails struct {
+	sizeX   int
+	sizeY   int
+	coordsX int
+	coordsY int
+}
+
+var x = islandDetails{sizeX: islandsHeight, sizeY: islandsWidth, coordsX: islandThreeX, coordsY: islandThreeY}
+var y = islandDetails{sizeX: islandYLength, sizeY: islandsWidth, coordsX: islandTwoX, coordsY: islandTwoY}
+var z = islandDetails{sizeX: islandXLength, sizeY: islandsWidth, coordsX: islandOneX, coordsY: islandOneY}
+
+var arr = []islandDetails{x, y, z}
 
 func drawCharacter(s *ebiten.Image) {
 	//If square does not already exist initialise it - this way a new image is not created each time
@@ -26,18 +40,19 @@ func drawCharacter(s *ebiten.Image) {
 	s.DrawImage(character, opts)
 }
 
-func detectCollision() (b int) {
+func (i *islandDetails) detectCollision() (b int) {
 	if posX <= 0 {
 		posX = 0
 	} else if posX >= screenWidth-characterSize {
 		posX = screenWidth - characterSize
 	}
-	if int(posX) >= islandOneX && int(posY) <= islandOneY {
+	if int(posX) >= i.coordsX && int(posY) <= i.coordsY {
+		log.Printf("coordsX: %v coordsY: %v, posX: %v, posY: %v", i.coordsX, i.coordsY, posX, posY)
 		onGround = true
-		return islandOneY - characterSize
-	} else if int(posX) <= islandYLength && int(posY) < islandTwoY {
-		onGround = true
-		return islandTwoY - characterSize
+		return i.coordsX - characterSize
+		// } else if int(posX) <= i.sizeY && int(posY) < i.sizeY {
+		//     onGround = true
+		//     return islandTwoY - characterSize
 	}
 	onGround = true
 	return lowerBound
@@ -56,24 +71,12 @@ func (i *islandDetails) drawEachLandmass(s *ebiten.Image) {
 	s.DrawImage(foliage, foliageOpts)
 }
 
-type islandDetails struct {
-	sizeX   int
-	sizeY   int
-	coordsX int
-	coordsY int
-}
-
 func drawLand(s *ebiten.Image) {
 	if landmass == nil {
 		landmass, _ = ebiten.NewImage(screenWidth, landHeight, ebiten.FilterNearest)
 		grass, _ = ebiten.NewImage(screenWidth, grassHeight, ebiten.FilterNearest)
 	}
 
-	x := islandDetails{sizeX: islandsHeight, sizeY: islandsWidth, coordsX: islandThreeX, coordsY: islandThreeY}
-	y := islandDetails{sizeX: islandYLength, sizeY: islandsWidth, coordsX: islandTwoX, coordsY: islandTwoY}
-	z := islandDetails{sizeX: islandXLength, sizeY: islandsWidth, coordsX: islandOneX, coordsY: islandOneY}
-
-	arr := []islandDetails{x, y, z}
 	for _, v := range arr {
 		v.drawEachLandmass(s)
 	}

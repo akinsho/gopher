@@ -20,7 +20,9 @@ func update(screen *ebiten.Image) error {
 	handleInput()
 	velocityY += gravity
 
-	contact = float64(detectCollision())
+	for _, v := range arr {
+		contact = float64(v.detectCollision())
+	}
 	posY += velocityY
 	if posY >= contact {
 		posY = contact
